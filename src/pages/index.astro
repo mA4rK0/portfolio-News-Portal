@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
 import { SEO } from "astro-seo";
+import Slider from "../components/Slider.astro";
 
 const blogPosts = await getCollection("blog");
 // console.log(blogPosts);
@@ -39,7 +40,11 @@ const blogPosts = await getCollection("blog");
     }
   </ul> -->
 
-  <h2>Articles</h2>
+  <div style="margin-top: 56px;">
+    <Slider posts={blogPosts.filter((post) => post.data.isPinned)} />
+  </div>
+
+  <!-- <h2>Articles</h2> -->
   <main class="container mt-content">
     <div class="row row-cols-1 row-cols-md-3 g-4">
       {
