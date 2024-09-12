@@ -99,12 +99,18 @@ const { Content, remarkPluginFrontmatter } = await post.render();
   s.src = 'https://mrc-news-portal.disqus.com/embed.js';
   s.setAttribute('data-timestamp', +new Date());
   (d.head || d.body).appendChild(s);
+  })();
+  </script>
+
+  <style>
+
+  .disqus-container {
     max-width: 64rem;
     padding: 6rem 2rem;
     background-color: #fff;
     margin: 0 auto;
   }
-
+  
   main .content-header {
     display: flex;
     flex-direction: column;
