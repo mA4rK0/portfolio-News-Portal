@@ -1,192 +1,187 @@
 ---
-import { getCollection } from "astro:content";
-import Layout from "../../layouts/Layout.astro";
-import { Image } from "astro:assets";
-import ladyBug from "../../assets/6.png";
-import { getFormattedDate } from "../../utils/global";
-import { SEO } from "astro-seo";
-import Share from "../../components/Share.astro";
+import { SEO } from 'astro-seo';
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import erika from '../../assets/erika.jpg';
+import Share from '../../components/Share.astro';
+import Layout from '../../layouts/Layout.astro';
+import { getFormattedDate } from '../../utils/global';
 
 export const getStaticPaths = async () => {
-  const blogPosts = await getCollection("blog");
+	const blogPosts = await getCollection('blog');
 
-  return blogPosts.map((post) => ({
-    params: { slug: post.slug },
-    props: { post }, //{id, slug, data, render}
-  }));
+	return blogPosts.map((post) => ({
+		params: { slug: post.slug },
+		props: { post }, // {id, slug, data, render}
+	}));
 };
 
 const { post } = Astro.props;
-// console.log(post);
-
 const { Content, remarkPluginFrontmatter } = await post.render();
 ---
 
 <Layout title={post.data.title}>
-  <SEO
-    slot="seo"
-    ,
-    title={post.data.title}
-    description={post.data.excerpt}
-    openGraph={{
-      basic: {
-        type: "website",
-        title: post.data.title,
-        image: post.data.image,
-      },
-      image: {
-        alt: "Thumbnail",
-      },
-    }}
-  />
+	<SEO
+		slot='seo'
+		title={post.data.title}
+		description={post.data.excerpt}
+		openGraph={{
+			basic: {
+				type: 'website',
+				title: post.data.title,
+				image: post.data.image,
+			},
+			image: {
+				alt: 'Thumbnail',
+			},
+		}}
+	/>
 
-  <!-- <Image src={ladyBug} alt="Author Image" />
-  <div>
-    <Image inferSize src={post.data.image} alt={post.data.image} />
-    <render.Content />
-  </div> -->
+	<main class='mt-content'>
+		<div class='content-header'>
+			<h1>
+				{post.data.title}
+			</h1>
+			<div class='meta'>
+				<div class='image'>
+					<Image src={erika} alt='Author' />
+				</div>
+				<div class='text'>
+					<p>
+						{post.data.author}
+					</p>
+					<div>
+						<time datetime={post.data.publishedAt}>
+							{getFormattedDate(post.data.publishedAt)}
+						</time>
 
-  <main class="mt-content">
-    <div class="content-header">
-      <h1>
-        {post.data.title}
-      </h1>
-      <div class="meta">
-        <div class="image">
-          <Image src={ladyBug} alt="Author" />
-        </div>
-        <div class="text">
-          <p>
-            {post.data.author}
-          </p>
-          <div>
-            <time datetime={post.data.publishedAt}>
-              {getFormattedDate(post.data.publishedAt)}
-            </time>
-            <span> &bull; </span>
-            <p>{remarkPluginFrontmatter.minutesRead}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+						<span> &bull; </span>
+						<p>{remarkPluginFrontmatter.minutesRead}</p>
+					</div>
+				</div>
+			</div>
+		</div>
 
-    <Share />
+		<Share />
 
-    <div class="picture">
-      <Image inferSize src={post.data.image} alt={post.data.image} />
-    </div>
-    <div class="content">
-      <Content />
-    </div>
-    <Share />
-    <!-- Disqus Comment Goes Here! -->
-    <div id="disqus_thread"></div>
-  </main>
+		<div class='picture'>
+			<Image inferSize src={post.data.image} alt={post.data.image} />
+		</div>
+		<div class='content'>
+			<Content />
+		</div>
+
+		<Share />
+
+		<!-- Disqus Comment Goes Here! -->
+		<div id='disqus_thread'></div>
+	</main>
 </Layout>
 
-<script is:inline define:vars={{PAGE_URL: Astro.url.href, PAGE_IDENTIFIER: post.slug}}>
-  /**
-  *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-  *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+<script
+	is:inline
+	define:vars={{ PAGE_URL: Astro.url.href, PAGE_IDENTIFIER: post.slug }}
+>
+	var disqus_config = function () {
+		this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+		this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+	};
+	(function () {
+		// DON'T EDIT BELOW THIS LINE
+		var d = document,
+			s = d.createElement('script');
+		s.src = 'https://astro-news-portal.disqus.com/embed.js';
+		s.setAttribute('data-timestamp', +new Date());
+		(d.head || d.body).appendChild(s);
+	})();
+</script>
 
-  var disqus_config = function () {
-  this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-  this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-  };
+<style>
+	main {
+		display: grid;
+		grid-template-columns: repeat(1fr);
+		max-width: 64rem;
+		padding: 6rem 2rem;
+		background-color: #fff;
+		margin: 0 auto;
+	}
 
-  (function() { // DON'T EDIT BELOW THIS LINE
-  var d = document, s = d.createElement('script');
-  s.src = 'https://mrc-news-portal.disqus.com/embed.js';
-  s.setAttribute('data-timestamp', +new Date());
-  (d.head || d.body).appendChild(s);
-  })();
-  </script>
+	main .content-header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		margin: 0 auto;
+	}
 
-  <style>
+	main .meta {
+		display: flex;
+		font-size: 0.875rem;
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+	}
 
-  .disqus-container {
-    max-width: 64rem;
-    padding: 6rem 2rem;
-    background-color: #fff;
-    margin: 0 auto;
-  }
-  
-  main .content-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin: 0 auto;
-  }
+	main .meta > div {
+		margin-right: 1rem;
+	}
 
-  main .meta {
-    display: flex;
-    font-size: 0.875rem;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-  }
+	main .meta .image {
+		width: 52px;
+		height: 52px;
+		aspect-ratio: 1 / 1;
+		overflow: hidden;
+		flex-shrink: 0;
+	}
 
-  main .meta > div {
-    margin-right: 1rem;
-  }
+	main .meta .image img {
+		object-fit: cover;
+		width: 100%;
+		height: 100%;
+		border-radius: 9999px;
+	}
 
-  main .meta .image {
-    width: 52px;
-    height: 52px;
-    aspect-ratio: 1 / 1;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
+	main .meta .text {
+		display: flex;
+		flex-direction: column;
+		align-items: start;
+	}
 
-  main .meta .image img {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-    border-radius: 9999px;
-  }
+	main .meta .text > p {
+		font-size: 1.25rem;
+		font-weight: 300;
+		margin-bottom: 0;
+	}
 
-  main .meta .text {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-  }
+	main .meta .text div:last-child {
+		display: flex;
+		color: #737373;
+	}
 
-  main .meta .text > p {
-    font-size: 1.25rem;
-    font-weight: 300;
-    margin-bottom: 0;
-  }
+	main .meta .text div:last-child span {
+		margin: 0 0.5rem;
+	}
 
-  main .meta .text div:last-child {
-    display: flex;
-    color: #737373;
-  }
+	main .content-header h1 {
+		max-width: 768px;
+	}
 
-  main .meta .text div:last-child span {
-    margin: 0 0.5rem;
-  }
+	main .picture {
+		height: 500px;
+		border-radius: 0.5rem;
+	}
 
-  main .content-header h1 {
-    max-width: 768px;
-  }
+	main .picture img {
+		width: 100%;
+		object-fit: cover;
+		height: 100%;
+		border-radius: 0.5rem;
+	}
 
-  main .picture {
-    height: 500px;
-    border-radius: 0.5rem;
-  }
+	main #disqus_thread {
+		margin-top: 4rem;
+	}
 
-  main .picture img {
-    width: 100%;
-    object-fit: cover;
-    height: 100%;
-    border-radius: 0.5rem;
-  }
-
-  main #disqus_thread {
-    margin-top: 4rem;
-  }
-
-  main .astro-social-share {
-    background-color: aqua;
-  }
+	main .astro-social-share {
+		background-color: aqua;
+	}
 </style>
